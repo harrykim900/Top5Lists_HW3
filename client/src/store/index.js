@@ -17,7 +17,8 @@ export const GlobalStoreActionType = {
     CLOSE_CURRENT_LIST: "CLOSE_CURRENT_LIST",
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
-    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE"
+    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    SHOW_DELETE_MODAL: "SHOW_DELETE_MODAL"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -94,6 +95,17 @@ export const useGlobalStore = () => {
                     isListNameEditActive: true,
                     isItemEditActive: false,
                     listMarkedForDeletion: null
+                });
+            }
+            // WHEN LIST CARD DELETE BTN IS PRESSED, OPEN DELETE MODAL
+            case GlobalStoreActionType.SHOW_DELETE_MODAL: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: true
                 });
             }
             default:
@@ -210,7 +222,7 @@ export const useGlobalStore = () => {
         // NOW MAKE IT OFFICIAL
         store.updateCurrentList();
     }
-    store.updateCurrentList = function() {
+    store.updateCurrentList = function () {
         async function asyncUpdateCurrentList() {
             const response = await api.updateTop5ListById(store.currentList._id, store.currentList);
             if (response.data.success) {
@@ -235,6 +247,40 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
             payload: null
         });
+    }
+    // OPENS THE DELETE MODAL
+    store.deleteList = function (id) {
+        // this.setState(prevState => ({
+        //     listKeyPairMarkedForDeletion: keyNamePair
+        // }), () => {
+
+        // });
+        // GET THE LIST
+        async function asyncDeleteList(id) {
+            let response = await api.getTop5ListById(id);
+            if (response.data.success) {
+                let top5List = response.data.top5List;
+                console.log(top5List);
+                store.showDeleteListModal();
+                storeReducer({
+                    type: GlobalStoreActionType.SHOW_DELETE_MODAL,
+                    payload: top5List
+                });
+            }
+        }
+        asyncDeleteList(id);
+
+    }
+    // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
+    // TO SEE IF THEY REALLY WANT TO DELETE THE LIST
+    store.showDeleteListModal = function () {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.add("is-visible");
+    }
+    // THIS FUNCTION IS FOR HIDING THE MODAL
+    store.hideDeleteListModal = function () {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.remove("is-visible");
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT

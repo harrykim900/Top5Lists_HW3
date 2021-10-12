@@ -42,6 +42,7 @@ function ListCard(props) {
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             let id = event.target.id.substring("list-".length);
+            console.log(id);
             store.changeListName(id, text);
             toggleEdit();
         }
@@ -49,6 +50,12 @@ function ListCard(props) {
 
     function handleUpdateText(event) {
         setText(event.target.value );
+    }
+
+    function handleDeleteList(event) {
+        event.stopPropagation();
+        let id = event.target.id.substring("delete-list-".length);
+        store.deleteList(id);
     }
 
     let selectClass = "unselected-list-card";
@@ -76,6 +83,7 @@ function ListCard(props) {
                 type="button"
                 id={"delete-list-" + idNamePair._id}
                 className="list-card-button"
+                onClick={handleDeleteList}
                 value={"\u2715"}
             />
             <input

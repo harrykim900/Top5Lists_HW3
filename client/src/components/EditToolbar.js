@@ -12,6 +12,7 @@ function EditToolbar() {
     const history = useHistory();
 
     let enabledButtonClass = "top5-button";
+    let disabledButtonClass = "top5-button-disabled";
     function handleUndo() {
         store.undo();
     }
