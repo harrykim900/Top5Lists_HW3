@@ -259,6 +259,9 @@ export const useGlobalStore = () => {
             payload: null
         });
     }
+    store.createNewList = function () {
+        console.log("Yeah");
+    }
     // OPENS THE DELETE MODAL
     store.deleteList = function (id) {
         // GET THE LIST

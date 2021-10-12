@@ -16,6 +16,16 @@ const ListSelector = () => {
         store.loadIdNamePairs();
     }, []);
 
+    function handleAddList(event) {
+        store.createNewList();
+    }
+    let addListButtonClass;
+    if (store.isListNameEditActive == false) {
+        addListButtonClass = "top5-button";
+    }
+    else {
+        addListButtonClass = "top5-button-disabled";
+    }
     let listCard = "";
     if (store) {
         listCard = store.idNamePairs.map((pair) => (
@@ -32,7 +42,8 @@ const ListSelector = () => {
                 <input
                     type="button"
                     id="add-list-button"
-                    className="top5-button"
+                    className={addListButtonClass}
+                    onClick={handleAddList}
                     value="+" />
                 Your Lists
             </div>

@@ -22,7 +22,7 @@ function EditToolbar() {
     }
 
     let closeButtonClass;
-    if (!store.currentList) {
+    if (store.currentList == null) {
         closeButtonClass = "top5-button-disabled";
     }
     else {
