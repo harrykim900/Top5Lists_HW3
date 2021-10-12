@@ -43,6 +43,7 @@ const ListSelector = () => {
                     type="button"
                     id="add-list-button"
                     className={addListButtonClass}
+                    disabled={store.isListNameEditActive}
                     onClick={handleAddList}
                     value="+" />
                 Your Lists

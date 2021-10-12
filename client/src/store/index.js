@@ -22,7 +22,7 @@ export const GlobalStoreActionType = {
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
-const tps = new jsTPS();
+export const tps = new jsTPS();
 
 // WITH THIS WE'RE MAKING OUR GLOBAL DATA STORE
 // AVAILABLE TO THE REST OF THE APPLICATION
@@ -178,6 +178,7 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
             payload: {}
         });
+        tps.clearAllTransactions();
     }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
@@ -207,7 +208,7 @@ export const useGlobalStore = () => {
             let response = await api.getTop5ListById(id);
             if (response.data.success) {
                 let top5List = response.data.top5List;
-
+                
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
                     storeReducer({
@@ -301,10 +302,10 @@ export const useGlobalStore = () => {
                                 top5List: top5List
                             }
                         });
+                        store.history.push("/top5list/" + top5List.id);
                     }
                 }
                 getListPairs(top5List);
-
             }
         }
         asyncCreateNewList();

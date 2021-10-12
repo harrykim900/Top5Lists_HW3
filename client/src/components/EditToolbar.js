@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { GlobalStoreContext } from '../store'
+import { GlobalStoreContext, tps } from '../store'
 import { useHistory } from 'react-router-dom'
 /*
     This toolbar is a functional React component that
@@ -13,14 +13,34 @@ function EditToolbar() {
 
     let enabledButtonClass = "top5-button";
 
+    // UNDO BUTTON FOOL PROOFING
     let undoButtonClass;
-    if (!store.currentList) {
-        undoButtonClass = "top5-button-disabled";
+    if (store.currentList) {
+        if (tps.hasTransactionToUndo()) {
+            undoButtonClass = "top5-button";
+        }
+        else {
+            undoButtonClass = "top5-button-disabled";
+        }
     }
     else {
-        undoButtonClass = "top5-button";
+        undoButtonClass = "top5-button-disabled";
     }
 
+    // REDO BUTTON FOOL PROOFING
+    let redoButtonClass;
+    if (store.currentList) {
+        if (tps.hasTransactionToRedo()) {
+            redoButtonClass = "top5-button";
+        }
+        else {
+            redoButtonClass = "top5-button-disabled";
+        }
+    }
+    else {
+        redoButtonClass = "top5-button-disabled";
+    }
+    // CLOSE BUTTON FOOL PROOFING
     let closeButtonClass;
     if (store.currentList == null) {
         closeButtonClass = "top5-button-disabled";
@@ -56,7 +76,7 @@ function EditToolbar() {
                 disabled={editStatus}
                 id='redo-button'
                 onClick={handleRedo}
-                className={enabledButtonClass}>
+                className={redoButtonClass}>
                 &#x21B7;
             </div>
             <div
