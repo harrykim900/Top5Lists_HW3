@@ -108,6 +108,17 @@ export const useGlobalStore = () => {
                     listMarkedForDeletion: true
                 });
             }
+
+            case GlobalStoreActionType.DELETE_MARKED_LIST: {
+                return setStore({
+                    idNamePairs: payload.idNamePairs,
+                    currentList: payload.top5List,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: null
+                });
+            }
             default:
                 return store;
         }
@@ -250,11 +261,6 @@ export const useGlobalStore = () => {
     }
     // OPENS THE DELETE MODAL
     store.deleteList = function (id) {
-        // this.setState(prevState => ({
-        //     listKeyPairMarkedForDeletion: keyNamePair
-        // }), () => {
-
-        // });
         // GET THE LIST
         async function asyncDeleteList(id) {
             let response = await api.getTop5ListById(id);
@@ -270,6 +276,32 @@ export const useGlobalStore = () => {
         }
         asyncDeleteList(id);
 
+    }
+    // CONFIRM DELETING LIST
+    store.deleteMarkedList = function () {
+        // console.log(store.currentList);
+        async function asyncDeleteMarkedList() {
+            let response = await api.deleteTop5ListById(store.currentList._id);
+            if (response.data.success) {
+                async function getListPairs() {
+                    response = await api.getTop5ListPairs();
+                    if (response.data.success) {
+                        let pairsArray = response.data.idNamePairs;
+                        console.log(pairsArray);
+                        store.hideDeleteListModal();
+                        storeReducer({
+                            type: GlobalStoreActionType.DELETE_MARKED_LIST,
+                            payload: {
+                                idNamePairs: pairsArray,
+                                top5List: null
+                            }
+                        });
+                    }
+                }
+                getListPairs();
+            }
+        }
+        asyncDeleteMarkedList();
     }
     // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
     // TO SEE IF THEY REALLY WANT TO DELETE THE LIST
