@@ -97,6 +97,17 @@ export const useGlobalStore = () => {
                     listMarkedForDeletion: null
                 });
             }
+            // CREATE A NEW LIST
+            case GlobalStoreActionType.CREATE_NEW_LIST: {
+                return setStore({
+                    idNamePairs: payload.idNamePairs,
+                    currentList: payload.top5List,
+                    newListCounter: payload.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: null
+                });
+            }
             // WHEN LIST CARD DELETE BTN IS PRESSED, OPEN DELETE MODAL
             case GlobalStoreActionType.SHOW_DELETE_MODAL: {
                 return setStore({
@@ -108,12 +119,12 @@ export const useGlobalStore = () => {
                     listMarkedForDeletion: true
                 });
             }
-
+            // DELETE LIST AFTER PRESSING CONFIRM
             case GlobalStoreActionType.DELETE_MARKED_LIST: {
                 return setStore({
                     idNamePairs: payload.idNamePairs,
                     currentList: payload.top5List,
-                    newListCounter: store.newListCounter,
+                    newListCounter: payload.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null
@@ -127,6 +138,7 @@ export const useGlobalStore = () => {
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
+    // FIRST FIGURE OUT WHAT THE NEW LIST'S KEY AND NAME WILL BE
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
         // GET THE LIST
@@ -259,8 +271,43 @@ export const useGlobalStore = () => {
             payload: null
         });
     }
+    // CREATES A NEW LIST
     store.createNewList = function () {
-        console.log("Yeah");
+        let newName = "Untitled" + store.newListCounter;
+        console.log(store.newListCounter);
+        console.log(store.idNamePairs);
+
+        // MAKE THE NEW LIST
+        let newList = {
+            name: newName,
+            items: ["?", "?", "?", "?", "?"]
+        };
+        async function asyncCreateNewList() {
+            let response = await api.createTop5List(newList);
+            if (response.data.success) {
+                let top5List = response.data.top5List;
+                let id = top5List._id;
+                console.log(top5List);
+                console.log(id);
+                async function getListPairs(top5List) {
+                    response = await api.getTop5ListPairs();
+                    if (response.data.success) {
+                        let pairsArray = response.data.idNamePairs;
+                        storeReducer({
+                            type: GlobalStoreActionType.CREATE_NEW_LIST,
+                            payload: {
+                                idNamePairs: pairsArray,
+                                newListCounter: store.newListCounter + 1,
+                                top5List: top5List
+                            }
+                        });
+                    }
+                }
+                getListPairs(top5List);
+
+            }
+        }
+        asyncCreateNewList();
     }
     // OPENS THE DELETE MODAL
     store.deleteList = function (id) {
@@ -269,7 +316,7 @@ export const useGlobalStore = () => {
             let response = await api.getTop5ListById(id);
             if (response.data.success) {
                 let top5List = response.data.top5List;
-                console.log(top5List);
+                // console.log(top5List);
                 store.showDeleteListModal();
                 storeReducer({
                     type: GlobalStoreActionType.SHOW_DELETE_MODAL,
@@ -296,6 +343,7 @@ export const useGlobalStore = () => {
                             type: GlobalStoreActionType.DELETE_MARKED_LIST,
                             payload: {
                                 idNamePairs: pairsArray,
+                                newListCounter: store.newListCounter,
                                 top5List: null
                             }
                         });
