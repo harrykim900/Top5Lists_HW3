@@ -16,7 +16,7 @@ function EditToolbar() {
     // UNDO BUTTON FOOL PROOFING
     let undoButtonClass;
     if (store.currentList) {
-        if (tps.hasTransactionToUndo()) {
+        if (tps.hasTransactionToUndo() && !store.isItemEditActive) {
             undoButtonClass = "top5-button";
         }
         else {
@@ -30,7 +30,7 @@ function EditToolbar() {
     // REDO BUTTON FOOL PROOFING
     let redoButtonClass;
     if (store.currentList) {
-        if (tps.hasTransactionToRedo()) {
+        if (tps.hasTransactionToRedo() && !store.isItemEditActive) {
             redoButtonClass = "top5-button";
         }
         else {
@@ -42,11 +42,11 @@ function EditToolbar() {
     }
     // CLOSE BUTTON FOOL PROOFING
     let closeButtonClass;
-    if (store.currentList == null) {
-        closeButtonClass = "top5-button-disabled";
+    if (store.currentList && !store.isItemEditActive) {
+        closeButtonClass = "top5-button";
     }
     else {
-        closeButtonClass = "top5-button"
+        closeButtonClass = "top5-button-disabled"
     }
 
     function handleUndo() {

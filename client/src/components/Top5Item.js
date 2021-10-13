@@ -79,6 +79,12 @@ function Top5Item(props) {
     if (draggedTo) {
         itemClass = "top5-item-dragged-to";
     }
+    let itemStatus = false;
+    let draggableStatus = true;
+    if (store.isItemEditActive) {
+        itemStatus = true;
+        draggableStatus = false;
+    }
     if (editActive) {
         return (
             <input
@@ -99,12 +105,13 @@ function Top5Item(props) {
                 onDragEnter={handleDragEnter}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                draggable="true"
+                draggable={draggableStatus}
             >
                 <input
                     type="button"
                     id={"edit-item-" + index + 1}
                     className="list-card-button"
+                    disabled={itemStatus}
                     onClick={handleToggleEdit}
                     value={"\u270E"}
                 />
