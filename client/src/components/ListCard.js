@@ -43,14 +43,18 @@ function ListCard(props) {
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             let id = event.target.id.substring("list-".length);
-            console.log(id);
             store.changeListName(id, text);
             toggleEdit();
         }
     }
 
     function handleUpdateText(event) {
-        setText(event.target.value );
+        if (event.target.value == "") {
+            setText(" ");
+        }
+        else {
+            setText(event.target.value );
+        }
     }
 
     function handleDeleteList(event) {
