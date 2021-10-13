@@ -13,7 +13,7 @@ function ListCard(props) {
     const [ editActive, setEditActive ] = useState(false);
     const [ text, setText ] = useState("");
     store.history = useHistory();
-    const { idNamePair, selected } = props;
+    let { idNamePair, selected } = props;
 
     function handleLoadList(event) {
         if (!event.target.disabled) {
@@ -57,6 +57,11 @@ function ListCard(props) {
         event.stopPropagation();
         let id = event.target.id.substring("delete-list-".length);
         store.deleteList(id);
+    }
+    if (store.currentList){
+        if (store.currentList._id == idNamePair._id) {
+            selected = true;
+        }
     }
 
     let selectClass = "unselected-list-card";

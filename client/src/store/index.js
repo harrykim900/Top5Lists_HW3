@@ -294,6 +294,7 @@ export const useGlobalStore = () => {
                     response = await api.getTop5ListPairs();
                     if (response.data.success) {
                         let pairsArray = response.data.idNamePairs;
+                        store.history.push("/top5list/" + id);
                         storeReducer({
                             type: GlobalStoreActionType.CREATE_NEW_LIST,
                             payload: {
@@ -302,7 +303,6 @@ export const useGlobalStore = () => {
                                 top5List: top5List
                             }
                         });
-                        store.history.push("/top5list/" + top5List.id);
                     }
                 }
                 getListPairs(top5List);
