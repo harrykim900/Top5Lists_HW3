@@ -28,6 +28,7 @@ function ListCard(props) {
 
     function handleToggleEdit(event) {
         event.stopPropagation();
+        setText(idNamePair.name);
         toggleEdit();
     }
 
@@ -70,6 +71,7 @@ function ListCard(props) {
         <div
             id={idNamePair._id}
             key={idNamePair._id}
+            disabled={cardStatus}
             onClick={handleLoadList}
             className={'list-card ' + selectClass}>
             <span
