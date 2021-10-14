@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import Top5Item from './Top5Item.js'
 import { GlobalStoreContext } from '../store'
@@ -10,7 +10,21 @@ import { GlobalStoreContext } from '../store'
 */
 function Workspace() {
     const { store } = useContext(GlobalStoreContext);
+    const [ id, setId ] = useState("");
     store.history = useHistory();
+
+    // if (store.currentList) {
+    //     let currentId = store.currentList._id;
+    //     setId(currentId);
+    // }
+    // useEffect(() => {
+    //     const data = window.localStorage.getItem("currentListId");
+    //     setId(JSON.parse(data));
+    //     // store.setCurrentList(id);
+    // }, []);
+    // useEffect(() => {
+    //     window.localStorage.setItem("currentListId", JSON.stringify(id));
+    // });
 
     let editItems = "";
     if (store.currentList) {
