@@ -20,11 +20,11 @@ const ListSelector = () => {
         store.createNewList();
     }
     let addListButtonClass;
-    if (store.isListNameEditActive == false) {
-        addListButtonClass = "top5-button";
+    if (store.isListNameEditActive == true) {
+        addListButtonClass = "top5-button-disabled";
     }
     else {
-        addListButtonClass = "top5-button-disabled";
+        addListButtonClass = "top5-button";
     }
     let listCard = "";
     if (store) {
