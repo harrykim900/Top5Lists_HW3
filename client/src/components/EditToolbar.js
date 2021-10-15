@@ -42,7 +42,7 @@ function EditToolbar() {
     }
     // CLOSE BUTTON FOOL PROOFING
     let closeButtonClass;
-    if (store.currentList && !store.isItemEditActive) {
+    if (store.currentList && !store.isItemEditActive && !store.listMarkedForDeletion) {
         closeButtonClass = "top5-button";
     }
     else {

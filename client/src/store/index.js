@@ -22,6 +22,7 @@ export const GlobalStoreActionType = {
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
     SHOW_DELETE_MODAL: "SHOW_DELETE_MODAL",
+    HIDE_DELETE_MODAL: "HIDE_DELETE_MODAL",
     DELETE_MARKED_LIST: "DELETE_MARKED_LIST",
     REFRESH: "REFRESH"
 }
@@ -128,11 +129,21 @@ export const useGlobalStore = () => {
             case GlobalStoreActionType.SHOW_DELETE_MODAL: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    currentList: payload.top5List,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: true
+                    listMarkedForDeletion: payload.top5List
+                });
+            }
+            case GlobalStoreActionType.HIDE_DELETE_MODAL: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: payload.listMarkedForDeletion
                 });
             }
             // DELETE LIST AFTER PRESSING CONFIRM
@@ -143,7 +154,7 @@ export const useGlobalStore = () => {
                     newListCounter: payload.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: payload.top5List,
                 });
             }
             case GlobalStoreActionType.REFRESH: {
@@ -210,7 +221,6 @@ export const useGlobalStore = () => {
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = function () {
         async function asyncLoadIdNamePairs() {
-            console.log("Load");
             const response = await api.getTop5ListPairs();
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
@@ -358,7 +368,10 @@ export const useGlobalStore = () => {
                 store.showDeleteListModal();
                 storeReducer({
                     type: GlobalStoreActionType.SHOW_DELETE_MODAL,
-                    payload: top5List
+                    payload: {
+                        top5List: top5List,
+                        listMarkedForDeletion: top5List
+                    }
                 });
             }
         }
@@ -374,14 +387,14 @@ export const useGlobalStore = () => {
                 response = await api.getTop5ListPairs();
                 if (response.data.success) {
                     let pairsArray = response.data.idNamePairs;
-                    console.log(pairsArray);
                     store.hideDeleteListModal();
                     storeReducer({
                         type: GlobalStoreActionType.DELETE_MARKED_LIST,
                         payload: {
                             idNamePairs: pairsArray,
                             newListCounter: store.newListCounter,
-                            top5List: null
+                            top5List: null,
+                            listMarkedForDeletion: null
                         }
                     });
                 }
@@ -393,30 +406,37 @@ export const useGlobalStore = () => {
             let response = await api.getTop5ListPairs();
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
-                console.log(pairsArray);
+
                 storeReducer({
                     type: GlobalStoreActionType.REFRESH,
                     payload: {
                         idNamePairs: pairsArray,
                         newListCounter: store.newListCounter,
-                        top5List: null
+                        top5List: null,
+                        listMarkedForDeletion: null
                     }
                 });
             }
         }
     }
-        // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
-        // TO SEE IF THEY REALLY WANT TO DELETE THE LIST
-        store.showDeleteListModal = function () {
-            let modal = document.getElementById("delete-modal");
-            modal.classList.add("is-visible");
-        }
-        // THIS FUNCTION IS FOR HIDING THE MODAL
-        store.hideDeleteListModal = function () {
-            let modal = document.getElementById("delete-modal");
-            modal.classList.remove("is-visible");
-        }
-
-        // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
-        return { store, storeReducer };
+    // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
+    // TO SEE IF THEY REALLY WANT TO DELETE THE LIST
+    store.showDeleteListModal = function () {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.add("is-visible");
     }
+    // THIS FUNCTION IS FOR HIDING THE MODAL
+    store.hideDeleteListModal = function () {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.remove("is-visible");
+        storeReducer({
+            type: GlobalStoreActionType.HIDE_DELETE_MODAL,
+            payload: {
+                listMarkedForDeletion: null
+            }
+        });
+    }
+
+    // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
+    return { store, storeReducer };
+}
