@@ -34,7 +34,7 @@ const apis = {
     getTop5ListPairs,
     updateTop5ListById,
     deleteTop5ListById,
-    getTop5ListById,
+    getTop5ListById
 }
 
 export default apis
