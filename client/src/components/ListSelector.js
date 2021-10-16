@@ -20,7 +20,7 @@ const ListSelector = () => {
         store.createNewList();
     }
     let addListButtonClass;
-    if (store.isListNameEditActive == true) {
+    if (store.isListNameEditActive == true || store.listMarkedForDeletion) {
         addListButtonClass = "top5-button-disabled";
     }
     else {
