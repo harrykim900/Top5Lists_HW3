@@ -76,6 +76,10 @@ function ListCard(props) {
     if (store.isListNameEditActive) {
         cardStatus = true;
     }
+    let buttonStatus = false;
+    if (store.isListNameEditActive || store.listMarkedForDeletion) {
+        buttonStatus = true;
+    }
     let cardElement =
         <div
             id={idNamePair._id}
@@ -90,7 +94,7 @@ function ListCard(props) {
                 {idNamePair.name}
             </span>
             <input
-                disabled={cardStatus}
+                disabled={buttonStatus}
                 type="button"
                 id={"delete-list-" + idNamePair._id}
                 className="list-card-button"
@@ -98,7 +102,7 @@ function ListCard(props) {
                 value={"\u2715"}
             />
             <input
-                disabled={cardStatus}
+                disabled={buttonStatus}
                 type="button"
                 id={"edit-list-" + idNamePair._id}
                 className="list-card-button"
