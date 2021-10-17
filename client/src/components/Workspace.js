@@ -10,21 +10,12 @@ import { GlobalStoreContext } from '../store'
 */
 function Workspace() {
     const { store } = useContext(GlobalStoreContext);
-    const [ id, setId ] = useState("");
     store.history = useHistory();
 
-    // if (store.currentList) {
-    //     let currentId = store.currentList._id;
-    //     setId(currentId);
-    // }
-    // useEffect(() => {
-    //     const data = window.localStorage.getItem("currentListId");
-    //     setId(JSON.parse(data));
-    //     // store.setCurrentList(id);
-    // }, []);
-    // useEffect(() => {
-    //     window.localStorage.setItem("currentListId", JSON.stringify(id));
-    // });
+    useEffect(() => {
+        let id = window.location.pathname.substring(10);
+        store.setCurrentList(id);
+    }, []);
 
     let editItems = "";
     if (store.currentList) {
