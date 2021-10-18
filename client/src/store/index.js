@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useState, useEffect } from 'react'
 import jsTPS from '../common/jsTPS'
 import api from '../api'
 import MoveItem_Transaction from '../transactions/MoveItem_Transaction'
@@ -41,6 +41,17 @@ export const useGlobalStore = () => {
         listNameActive: false,
         itemActive: false,
         listMarkedForDeletion: null
+    });
+
+    useEffect(() => {
+        const data = localStorage.getItem("listCounter");
+        if (data) {
+            store.newListCounter = JSON.parse(data);
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("listCounter", JSON.stringify(store.newListCounter));
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST

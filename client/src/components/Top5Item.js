@@ -40,7 +40,10 @@ function Top5Item(props) {
         setDraggedTo(false);
 
         // UPDATE THE LIST
-        store.addMoveItemTransaction(sourceId, targetId);
+        if (targetId != sourceId) {
+            store.addMoveItemTransaction(sourceId, targetId);
+        }
+
     }
     // EDITING AN ITEM
     function handleToggleEdit(event) {
